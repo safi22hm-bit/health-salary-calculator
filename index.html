@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حساب رواتب موظفي وزارة الصحة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0a4f3c;
+    --primary-light: #0d6b52;
+    --accent: #c8a951;
+    --bg: #f4f1eb;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --muted: #7a7a7a;
+    --border: #e0dbd0;
+    --success: #10b981;
+    --danger: #ef4444;
+    --blue: #3b82f6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 0% 0%, rgba(10,79,60,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 100% 100%, rgba(200,169,81,0.09) 0%, transparent 55%);
+  }
+
+  header {
+    background: linear-gradient(135deg, #0a4f3c 0%, #0d6b52 100%);
+    padding: 36px 24px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(200,169,81,0.2);
+    border: 1px solid rgba(200,169,81,0.4);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 30px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  header h1 {
+    color: white;
+    font-size: 1.85rem;
+    font-weight: 900;
+    line-height: 1.3;
+    position: relative;
+  }
+
+  header p {
+    color: rgba(255,255,255,0.6);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.88rem;
+    margin-top: 8px;
+    position: relative;
+  }
+
+  .header-icon { font-size: 2.8rem; margin-bottom: 12px; position: relative; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 660px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 26px;
+    box-shadow: 0 2px 20px rgba(10,79,60,0.08);
+    border: 1px solid var(--border);
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .icon-box {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+  }
+
+  .field { margin-bottom: 18px; }
+
+  label.field-label {
+    display: block;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '▾';
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+
+  select, input[type="number"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    background: #fafaf7;
+    color: var(--text);
+    transition: border 0.2s, box-shadow 0.2s;
+    direction: rtl;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  select:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(10,79,60,0.09);
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  /* Radio grids */
+  .radio-grid { display: grid; gap: 8px; }
+  .radio-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .radio-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 400px) { .radio-grid.cols-4 { grid-template-columns: 1fr 1fr; } }
+
+  .radio-btn input[type="radio"] { display: none; }
+
+  .radio-btn label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 68px;
+    padding: 8px 6px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    background: #fafaf7;
+    transition: all 0.18s;
+    margin: 0;
+  }
+
+  .radio-btn label .rb-main {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .radio-btn label .rb-sub {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 3px;
+    font-family: 'Tajawal', sans-serif;
+    direction: ltr;
+  }
+
+  .radio-btn input:checked + label {
+    border-color: var(--primary);
+    background: var(--primary);
+    box-shadow: 0 4px 12px rgba(10,79,60,0.22);
+  }
+
+  .radio-btn input:checked + label .rb-main,
+  .radio-btn input:checked + label .rb-sub { color: white; }
+
+  /* 2-col: horizontal layout */
+  .radio-grid.cols-2 .radio-btn label {
+    height: 56px;
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .radio-grid.cols-2 .radio-btn label .rb-sub { margin-top: 0; }
+
+  .children-field { display: none; margin-bottom: 18px; }
+  .children-field.show { display: block; }
+
+  .sep {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.72rem; font-family: 'Tajawal', sans-serif;
+    color: var(--muted); letter-spacing: 0.5px;
+    margin: 6px 0 18px;
+  }
+  .sep::before, .sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .btn-calc {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.22s;
+    box-shadow: 0 4px 18px rgba(10,79,60,0.28);
+    margin-top: 4px;
+  }
+
+  .btn-calc:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10,79,60,0.35); }
+  .btn-calc:active { transform: translateY(0); }
+
+  /* Results */
+  .result-panel { display: none; margin-top: 24px; }
+  .result-panel.show { display: block; animation: fadeUp 0.38s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-top {
+    background: linear-gradient(135deg, var(--primary) 0%, #116649 100%);
+    border-radius: 22px 22px 0 0;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .result-top .lbl-small {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 6px;
+  }
+
+  .net-amount {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: white;
+    direction: ltr;
+    letter-spacing: -1px;
+  }
+
+  .net-amount .cur {
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.65;
+    margin-left: 6px;
+  }
+
+  .big-icon { font-size: 3rem; }
+
+  .result-body {
+    background: white;
+    border-radius: 0 0 22px 22px;
+    border: 1px solid var(--border);
+    border-top: none;
+    overflow: hidden;
+  }
+
+  .brow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 26px;
+    border-bottom: 1px solid #f4f1eb;
+  }
+
+  .brow .lbl {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.88rem; color: #444;
+  }
+
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .dot.blue  { background: var(--blue); }
+  .dot.green { background: var(--success); }
+  .dot.gold  { background: var(--accent); }
+  .dot.red   { background: var(--danger); }
+
+  .brow .amt { font-weight: 700; font-size: 0.9rem; direction: ltr; }
+  .amt.base  { color: var(--blue); }
+  .amt.plus  { color: var(--success); }
+  .amt.minus { color: var(--danger); }
+
+  .total-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 26px;
+    background: linear-gradient(to left, #ecfdf5, #f0fdf8);
+    border-top: 2px solid var(--success);
+  }
+
+  .total-row .lbl { font-size: 1rem; font-weight: 900; color: var(--primary); }
+  .total-row .amt { font-size: 1.15rem; font-weight: 900; color: var(--success); direction: ltr; }
+
+  .notice {
+    background: linear-gradient(135deg, rgba(200,169,81,0.08), rgba(200,169,81,0.04));
+    border: 1px solid rgba(200,169,81,0.3);
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 0.78rem;
+    color: #7a5c1e;
+    margin-top: 18px;
+    font-family: 'Tajawal', sans-serif;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-icon">🏥</div>
+  <div class="header-badge">🇮🇶 جمهورية العراق</div>
+  <h1>حساب رواتب موظفي وزارة الصحة</h1>
+  <p>أدخل بياناتك الوظيفية واحصل على تفاصيل راتبك الشهري فوراً</p>
+</header>
+
+<div class="container">
+  <div class="grid">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <div class="card-title"><div class="icon-box">📋</div> بيانات الوظيفة</div>
+
+      <div class="field">
+        <label class="field-label">الدرجة الوظيفية</label>
+        <div class="select-wrap">
+          <select id="degree">
+            <option value="">— اختر الدرجة —</option>
+            <option value="1">الدرجة الأولى</option>
+            <option value="2">الدرجة الثانية</option>
+            <option value="3">الدرجة الثالثة</option>
+            <option value="4">الدرجة الرابعة</option>
+            <option value="5">الدرجة الخامسة</option>
+            <option value="6">الدرجة السادسة</option>
+            <option value="7">الدرجة السابعة</option>
+            <option value="8">الدرجة الثامنة</option>
+            <option value="9">الدرجة التاسعة</option>
+            <option value="10">الدرجة العاشرة</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">المرحلة</label>
+        <div class="select-wrap">
+          <select id="stage">
+            <option value="">— اختر المرحلة —</option>
+            <option value="1">المرحلة 1</option>
+            <option value="2">المرحلة 2</option>
+            <option value="3">المرحلة 3</option>
+            <option value="4">المرحلة 4</option>
+            <option value="5">المرحلة 5</option>
+            <option value="6">المرحلة 6</option>
+            <option value="7">المرحلة 7</option>
+            <option value="8">المرحلة 8</option>
+            <option value="9">المرحلة 9</option>
+            <option value="10">المرحلة 10</option>
+            <option value="11">المرحلة 11</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">الشهادة العلمية</label>
+        <div class="select-wrap">
+          <select id="certificate">
+            <option value="1.00">دكتوراه أو ما يعادلها — 100%</option>
+            <option value="0.75">ماجستير أو ما يعادلها — 75%</option>
+            <option value="0.55">دبلوم عالٍ (بعد الجامعة) — 55%</option>
+            <option value="0.45" selected>بكالوريوس — 45%</option>
+            <option value="0.35">دبلوم فني — 35%</option>
+            <option value="0.25">إعدادية — 25%</option>
+            <option value="0.15">بدون شهادة (حرفة) — 15%</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">نسبة مخصصات الخطورة (%)</label>
+        <input type="number" id="hazard" placeholder="مثال: 50" min="0" max="200" value="50">
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <div class="card-title"><div class="icon-box">🏠</div> موقع العمل والحالة الاجتماعية</div>
+
+      <div class="field">
+        <label class="field-label">موقع العمل — مخصصات النقل</label>
+        <div class="radio-grid cols-2">
+          <div class="radio-btn">
+            <input type="radio" name="location" id="loc1" value="20000" checked>
+            <label for="loc1"><span class="rb-main">مركز المحافظة</span><span class="rb-sub">20,000 د.ع</span></label>
+          </div>
+          <div class="radio-btn">
+            <input type="radio" name="location" id="loc2" value="30000">
+            <label for="loc2"><span class="rb-main">مركز القضاء</span><span class="rb-sub">30,000 د.ع</span></label>
+          </div>
+          <div class="radio-btn">
+            <input type="radio" name="location" id="loc3" value="40000">
+            <label for="loc3"><span class="rb-main">مركز الناحية</span><span class="rb-sub">40,000 د.ع</span></label>
+          </div>
+          <div class="radio-btn">
+            <input type="radio" name="location" id="loc4" value="50000">
+            <label for="loc4"><span class="rb-main">منطقة ريفية</span><span class="rb-sub">50,000 د.ع</span></label>
+          </div>
+          <div class="radio-btn" style="grid-column: 1 / -1;">
+            <input type="radio" name="location" id="loc5" value="60000">
+            <label for="loc5" style="height:56px; flex-direction:row; gap:8px;"><span class="rb-main">منطقة نائية</span><span class="rb-sub">60,000 د.ع</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="sep">الحالة الاجتماعية</div>
+
+      <div class="field">
+        <label class="field-label">الحالة الزوجية</label>
+        <div class="radio-grid cols-2">
+          <div class="radio-btn">
+            <input type="radio" name="married" id="single" value="0" checked onchange="toggleChildren()">
+            <label for="single"><span class="rb-main">أعزب / عزباء</span><span class="rb-sub">—</span></label>
+          </div>
+          <div class="radio-btn">
+            <input type="radio" name="married" id="married_r" value="50000" onchange="toggleChildren()">
+            <label for="married_r"><span class="rb-main">متزوج / متزوجة</span><span class="rb-sub">50,000 د.ع</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="children-field" id="childrenField">
+        <label class="field-label">عدد الأطفال (الحد الأقصى 3)</label>
+        <div class="radio-grid cols-4">
+          <div class="radio-btn">
+            <input type="radio" name="children" id="ch0" value="0" checked>
+            <label for="ch0"><span class="rb-main">بلا</span><span class="rb-sub">0 د.ع</span></label>
+          </div>
+          <div class="radio-btn">
+            <input type="radio" name="children" id="ch1" value="10000">
+            <label for="ch1"><span class="rb-main">1</span><span class="rb-sub">10,000</span></label>
+          </div>
+          <div class="radio-btn">
+            <input type="radio" name="children" id="ch2" value="20000">
+            <label for="ch2"><span class="rb-main">2</span><span class="rb-sub">20,000</span></label>
+          </div>
+          <div class="radio-btn">
+            <input type="radio" name="children" id="ch3" value="30000">
+            <label for="ch3"><span class="rb-main">3</span><span class="rb-sub">30,000</span></label>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-calc" onclick="calculate()">🧮 &nbsp; احسب الراتب الآن</button>
+    </div>
+
+  </div>
+
+  <!-- Result -->
+  <div class="result-panel" id="resultPanel">
+    <div class="result-top">
+      <div>
+        <div class="lbl-small">الراتب الصافي الشهري</div>
+        <div class="net-amount" id="netDisplay">0<span class="cur">د.ع</span></div>
+      </div>
+      <div class="big-icon">💰</div>
+    </div>
+
+    <div class="result-body">
+      <div class="brow"><div class="lbl"><span class="dot blue"></span>الراتب الاسمي</div><div class="amt base" id="r_base">—</div></div>
+      <div class="brow"><div class="lbl"><span class="dot green"></span>مخصصات الشهادة</div><div class="amt plus" id="r_cert">—</div></div>
+      <div class="brow"><div class="lbl"><span class="dot green"></span>مخصصات الخطورة</div><div class="amt plus" id="r_haz">—</div></div>
+      <div class="brow"><div class="lbl"><span class="dot gold"></span>مخصصات النقل</div><div class="amt plus" id="r_trans">—</div></div>
+      <div class="brow"><div class="lbl"><span class="dot gold"></span>مخصصات الزوجية والأطفال</div><div class="amt plus" id="r_family">—</div></div>
+      <div class="brow" style="border-bottom:none"><div class="lbl"><span class="dot red"></span>استقطاع التقاعد (10%)</div><div class="amt minus" id="r_pension">—</div></div>
+      <div class="total-row">
+        <div class="lbl">✅ الراتب الصافي</div>
+        <div class="amt" id="r_net">—</div>
+      </div>
+    </div>
+
+    <div class="notice">
+      ⚠️ هذه الحسبة تقريبية وفق بيانات سلم الرواتب المُدخلة. قد تختلف الأرقام الفعلية بسبب تعديلات وزارة المالية أو بدلات إضافية خاصة.
+    </div>
+  </div>
+</div>
+
+<script>
+  const salaryTable = {
+    1:  [910,930,950,970,990,1010,1030,1050,1070,1090,1110],
+    2:  [723,740,757,774,791,808,825,842,859,876,893],
+    3:  [600,610,620,630,640,650,660,670,680,690,700],
+    4:  [509,517,525,533,541,549,557,565,573,581,589],
+    5:  [429,435,441,447,453,459,465,471,477,483,489],
+    6:  [362,368,374,380,386,392,398,404,410,416,422],
+    7:  [296,302,308,314,320,326,332,338,344,350,356],
+    8:  [260,263,266,269,272,275,278,281,284,287,290],
+    9:  [210,213,216,219,222,225,228,231,234,237,240],
+    10: [170,173,176,179,182,185,188,191,194,197,200],
+  };
+
+  function fmt(n) { return n.toLocaleString('en-US') + ' د.ع'; }
+
+  function toggleChildren() {
+    const isMarried = document.querySelector('input[name="married"]:checked').value !== '0';
+    document.getElementById('childrenField').classList.toggle('show', isMarried);
+    if (!isMarried) document.getElementById('ch0').checked = true;
+  }
+
+  function calculate() {
+    const degree = parseInt(document.getElementById('degree').value);
+    const stage  = parseInt(document.getElementById('stage').value);
+    if (!degree || !stage) { alert('الرجاء اختيار الدرجة الوظيفية والمرحلة أولاً'); return; }
+
+    const baseSalary  = salaryTable[degree][stage - 1] * 1000;
+    const certRate    = parseFloat(document.getElementById('certificate').value);
+    const hazardRate  = parseFloat(document.getElementById('hazard').value || 0) / 100;
+    const transport   = parseInt(document.querySelector('input[name="location"]:checked').value);
+    const marriedAmt  = parseInt(document.querySelector('input[name="married"]:checked').value);
+    const childrenAmt = parseInt(document.querySelector('input[name="children"]:checked')?.value || 0);
+
+    const certAllow   = Math.round(baseSalary * certRate);
+    const hazardAllow = Math.round(baseSalary * hazardRate);
+    const familyAllow = marriedAmt + childrenAmt;
+    const pension     = Math.round(baseSalary * 0.10);
+    const net         = baseSalary + certAllow + hazardAllow + transport + familyAllow - pension;
+
+    document.getElementById('r_base').textContent    = fmt(baseSalary);
+    document.getElementById('r_cert').textContent    = '+ ' + fmt(certAllow);
+    document.getElementById('r_haz').textContent     = '+ ' + fmt(hazardAllow);
+    document.getElementById('r_trans').textContent   = '+ ' + fmt(transport);
+    document.getElementById('r_family').textContent  = '+ ' + fmt(familyAllow);
+    document.getElementById('r_pension').textContent = '− ' + fmt(pension);
+    document.getElementById('r_net').textContent     = fmt(net);
+    document.getElementById('netDisplay').innerHTML  = net.toLocaleString('en-US') + '<span class="cur"> د.ع</span>';
+
+    const panel = document.getElementById('resultPanel');
+    panel.classList.remove('show');
+    void panel.offsetWidth;
+    panel.classList.add('show');
+    setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+</script>
+</body>
+</html>
