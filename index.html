@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>حساب رواتب موظفي وزارة الصحة</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F1EMSJVXHL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-F1EMSJVXHL');
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -348,6 +356,59 @@
     font-family: 'Tajawal', sans-serif;
     line-height: 1.8;
   }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--primary);
+    margin-top: 40px;
+    padding: 32px 20px;
+    text-align: center;
+  }
+
+  .footer-title {
+    color: rgba(255,255,255,0.6);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.82rem;
+    margin-bottom: 18px;
+    letter-spacing: 0.5px;
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .social-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+
+  .social-btn:hover { transform: translateY(-3px); opacity: 0.9; }
+
+  .social-btn.facebook  { background: #1877f2; color: white; }
+  .social-btn.instagram { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+  .social-btn.tiktok    { background: #010101; color: white; border-color: #333; }
+
+  .social-icon { font-size: 1.1rem; }
+
+  .footer-copy {
+    color: rgba(255,255,255,0.35);
+    font-size: 0.72rem;
+    font-family: 'Tajawal', sans-serif;
+    margin-top: 16px;
+  }
 </style>
 </head>
 <body>
@@ -584,5 +645,21 @@
     setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   }
 </script>
+
+<footer>
+  <div class="footer-title">تواصل معنا على منصات التواصل الاجتماعي</div>
+  <div class="social-links">
+    <a href="https://www.facebook.com/share/18Gg638CgM/" target="_blank" class="social-btn facebook">
+      <span class="social-icon">📘</span> فيسبوك
+    </a>
+    <a href="http://www.instagram.com/1tech.pulse" target="_blank" class="social-btn instagram">
+      <span class="social-icon">📸</span> انستغرام
+    </a>
+    <a href="https://www.tiktok.com/@1tech.pulse" target="_blank" class="social-btn tiktok">
+      <span class="social-icon">🎵</span> تيكتوك
+    </a>
+  </div>
+  <div class="footer-copy">© 2026 حاسبة رواتب وزارة الصحة العراقية — جميع الحقوق محفوظة</div>
+</footer>
 </body>
 </html>
